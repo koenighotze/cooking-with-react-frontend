@@ -1,20 +1,17 @@
 import React, { useState } from 'react'
 import { useEffect } from 'react'
+import { storeRecipes, loadRecipes } from './repository/recipeRepository'
+
 export const RecipeContext = React.createContext()
 const LOCAL_STORAGE_KEY = 'cookingWithReact.recipes'
-export default function RecipeProvider({children, initialRecipes}) {
+export default function RecipeProvider({ children, initialRecipes }) {
   const [recipes, setRecipes] = useState(() => {
-    const storedRecipes = localStorage.getItem(LOCAL_STORAGE_KEY)
-    if (null == storedRecipes) {
-      return initialRecipes
-    }
-
-    return JSON.parse(storedRecipes)
+    return loadRecipes(initialRecipes)
   })
 
   const [selectedRecipeId, setSelectedRecipeId] = useState()
 
-  useEffect(() => localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(recipes)), [recipes])
+  useEffect(() => storeRecipes(recipes), [recipes])
 
   const handleRecipeAdd = () => {
     const newRecipe = {
@@ -23,7 +20,7 @@ export default function RecipeProvider({children, initialRecipes}) {
       servings: 0,
       cookTime: '',
       instructions: '',
-      ingredients: []
+      ingredients: [],
     }
 
     setRecipes(() => [...recipes, newRecipe])
@@ -36,8 +33,11 @@ export default function RecipeProvider({children, initialRecipes}) {
       return
     }
 
-    const recipe = recipes.find(r => r.id === selectedRecipeId)
-    handleRecipeChanged(selectedRecipeId, {...recipe, ingredients: [...recipe.ingredients.filter(i => i.id !== ingredientId)]})
+    const recipe = recipes.find((r) => r.id === selectedRecipeId)
+    handleRecipeChanged(selectedRecipeId, {
+      ...recipe,
+      ingredients: [...recipe.ingredients.filter((i) => i.id !== ingredientId)],
+    })
   }
 
   const handleIngredientAdd = () => {
@@ -49,15 +49,18 @@ export default function RecipeProvider({children, initialRecipes}) {
     const newIngredient = {
       id: crypto.randomUUID(),
       name: 'New ingredient',
-      amount: ''
+      amount: '',
     }
 
-    const recipe = recipes.find(r => r.id === selectedRecipeId)
-    handleRecipeChanged(selectedRecipeId, {...recipe, ingredients: [...recipe.ingredients, newIngredient]})
+    const recipe = recipes.find((r) => r.id === selectedRecipeId)
+    handleRecipeChanged(selectedRecipeId, {
+      ...recipe,
+      ingredients: [...recipe.ingredients, newIngredient],
+    })
   }
 
   const handleRecipeDelete = (id) => {
-    setRecipes((prev) => prev.filter(r => r.id !== id))
+    setRecipes((prev) => prev.filter((r) => r.id !== id))
   }
 
   const handleRecipeSelected = (id) => {
@@ -66,7 +69,7 @@ export default function RecipeProvider({children, initialRecipes}) {
 
   // TODO check if this can be done with a cold copy and "apply changes button"
   const handleRecipeChanged = (id, newRecipe) => {
-    const prevRecipeIdx = recipes.findIndex(r => r.id === id)
+    const prevRecipeIdx = recipes.findIndex((r) => r.id === id)
     const newRecipes = [...recipes]
     newRecipes[prevRecipeIdx] = newRecipe
     setRecipes(newRecipes)
@@ -95,9 +98,5 @@ export default function RecipeProvider({children, initialRecipes}) {
     // setSelectedRecipeId
   }
 
-  return (
-    <RecipeContext.Provider value={contextState}>
-      {children}
-    </RecipeContext.Provider>
-  )
+  return <RecipeContext.Provider value={contextState}>{children}</RecipeContext.Provider>
 }

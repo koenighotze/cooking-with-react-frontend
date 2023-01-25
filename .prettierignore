@@ -1,0 +1,8 @@
+**/*css
+**/*yaml
+**/*yml
+**/*md
+node_modules/
+build/
+dist/
+coverage/
