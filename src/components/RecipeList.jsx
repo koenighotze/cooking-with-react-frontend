@@ -1,7 +1,6 @@
 import React, { useContext } from 'react'
-import Recipe from './Recipe'
 import { RecipeContext } from '../provider/RecipeProvider'
-import { useEffect } from 'react'
+import Recipe from './Recipe'
 
 export default function RecipeList() {
   const { handleRecipeAdd, recipes } = useContext(RecipeContext)

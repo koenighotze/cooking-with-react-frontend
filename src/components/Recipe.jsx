@@ -1,9 +1,19 @@
+import PropTypes from 'prop-types'
 import React, { useContext } from 'react'
-// import { useEffect } from 'react'
 import { RecipeContext } from '../provider/RecipeProvider'
 import IngredientList from './IngredientList'
 
-export default function Recipe({ id, name, servings, cookTime, instructions, ingredients }) {
+export default function Recipe(props) {
+  const {
+    id,
+    name,
+    description,
+    servings,
+    totalTimeMinutes,
+    prepTimeMinutes,
+    instructions,
+    ingredients,
+  } = props
   const { handleRecipeDelete, handleRecipeSelected } = useContext(RecipeContext)
 
   return (
@@ -19,9 +29,15 @@ export default function Recipe({ id, name, servings, cookTime, instructions, ing
           </button>
         </div>
       </div>
+      <div className="recipe__description">{description}</div>
       <div className="recipe__row">
-        <span className="recipe__label">Cool Time:</span>
-        <span className="recipe__value">{cookTime}</span>
+        <span className="recipe__label">Preparation Time:</span>
+        <span className="recipe__value">{prepTimeMinutes}</span>
+      </div>
+
+      <div className="recipe__row">
+        <span className="recipe__label">Cook Time:</span>
+        <span className="recipe__value">{totalTimeMinutes}</span>
       </div>
       <div className="recipe__row">
         <span className="recipe__label">Servings:</span>
@@ -45,4 +61,15 @@ export default function Recipe({ id, name, servings, cookTime, instructions, ing
       </div>
     </div>
   )
+}
+
+Recipe.propTypes = {
+  id: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  servings: PropTypes.number.isRequired,
+  totalTimeMinutes: PropTypes.number.isRequired,
+  prepTimeMinutes: PropTypes.number.isRequired,
+  instructions: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
+  ingredients: PropTypes.array.isRequired,
 }

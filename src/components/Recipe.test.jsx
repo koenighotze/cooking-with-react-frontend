@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react'
 import { describe, it, expect, vi } from 'vitest'
 
-import Recipe from './Recipe'
 import RecipeProvider from '../provider/RecipeProvider'
+import Recipe from './Recipe'
 
 describe('the recipe', () => {
   const recipe = {
@@ -15,8 +15,6 @@ describe('the recipe', () => {
   }
 
   beforeEach(() => {
-    console.log('setup mock')
-
     vi.mock('../provider/repository/recipeRepository.js', () => ({
       loadRecipes: vi.fn(),
       storeRecipes: vi.fn(),
@@ -26,11 +24,11 @@ describe('the recipe', () => {
   describe('when rendered', () => {
     beforeEach(() => {
       render(
-        <RecipeProvider>
+        <RecipeProvider initialRecipes={[]}>
           <Recipe {...recipe} />
         </RecipeProvider>,
       )
-      screen.debug()
+      // screen.debug()
     })
 
     it('should not render the recipe id', () => {

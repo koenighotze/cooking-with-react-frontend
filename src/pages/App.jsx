@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext } from 'react'
 import RecipeEdit from '../components/RecipeEdit'
 import RecipeList from '../components/RecipeList'
-import RecipeProvider, { RecipeContext } from '../provider/RecipeProvider'
+import { RecipeContext } from '../provider/RecipeProvider'
 
 function App() {
   const { selectedRecipeId, recipes } = useContext(RecipeContext)

@@ -1,17 +1,19 @@
-import React, { useState } from 'react'
-import { useEffect } from 'react'
-import { storeRecipes, loadRecipes } from './repository/recipeRepository'
+import PropTypes from 'prop-types'
+import React, { useState, useEffect } from 'react'
+import fetchRecipes from './service/backend-service'
 
 export const RecipeContext = React.createContext()
-const LOCAL_STORAGE_KEY = 'cookingWithReact.recipes'
 export default function RecipeProvider({ children, initialRecipes }) {
-  const [recipes, setRecipes] = useState(() => {
-    return loadRecipes(initialRecipes)
-  })
-
   const [selectedRecipeId, setSelectedRecipeId] = useState()
+  const [recipes, setRecipes] = useState(initialRecipes)
+  useEffect(() => {
+    const load = async () => {
+      const recipes = await fetchRecipes()
+      setRecipes(recipes)
+    }
 
-  useEffect(() => storeRecipes(recipes), [recipes])
+    load()
+  }, [])
 
   const handleRecipeAdd = () => {
     const newRecipe = {
@@ -42,7 +44,6 @@ export default function RecipeProvider({ children, initialRecipes }) {
 
   const handleIngredientAdd = () => {
     if (!selectedRecipeId) {
-      console.log('No recipe selected!')
       return
     }
 
@@ -75,15 +76,6 @@ export default function RecipeProvider({ children, initialRecipes }) {
     setRecipes(newRecipes)
   }
 
-  // const handleIngredientChanged = (ingredientId, newIngredient) => {
-  //   const recipe = recipes.findIndex(r => r.id === id)
-  //   const newIngredients = [...recipe.ingredients]
-  //   const prevIngredientIdx = newIngredients.findIndex(r => r.id === ingredientId)
-  //   newIngredients[prevIngredientIdx] = newIngredient
-
-  //   handleRecipeChanged(recipeId, { ...recipe, ingredients: newIngredients } )
-  // }
-
   const contextState = {
     handleRecipeDelete,
     handleRecipeAdd,
@@ -91,12 +83,14 @@ export default function RecipeProvider({ children, initialRecipes }) {
     handleRecipeChanged,
     handleIngredientAdd,
     handleIngredientDeleted,
-    // handleIngredientChanged,
     recipes,
-    // setRecipes,
     selectedRecipeId,
-    // setSelectedRecipeId
   }
 
   return <RecipeContext.Provider value={contextState}>{children}</RecipeContext.Provider>
+}
+
+RecipeProvider.propTypes = {
+  children: PropTypes.object.isRequired,
+  initialRecipes: PropTypes.array.isRequired,
 }
